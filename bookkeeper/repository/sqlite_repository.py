@@ -68,12 +68,13 @@ class SQLiteRepository(AbstractRepository[T]):
             cur = con.cursor()
             #cur.execute('PRAGMA foreign_keys = ON')
             cur.execute(f'UPDATE {self.table_name} SET ({names}) = ({p}) WHERE pk = {obj.pk}', values)
-        return None
         con.close()
+        return None
+
 
     def delete(self, obj: T) -> None:
         with sqlite3.connect(self.db_file) as con:
             cur = con.cursor()
             cur.execute(f'DELETE FROM {self.table_name} WHERE pk = {obj.pk}')
-        return None
         con.close()
+        return None
