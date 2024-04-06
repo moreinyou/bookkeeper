@@ -3,6 +3,8 @@
 """
 
 from typing import Iterable, Iterator
+from inspect import get_annotations
+from bookkeeper.repository.abstract_repository import T
 
 
 def _get_indent(line: str) -> int:
