@@ -49,7 +49,7 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(self.central_widget)
         self.layout = QGridLayout(self.central_widget)
 
-        with open(r'D:\PycharmProjects\практика\app\bookkeeper\style.qss', 'r') as f:
+        with open(r'..\style.qss', 'r') as f:
             self.setStyleSheet(f.read())
     #def table1(self):
         self.layout.addWidget(QLabel('Последние расходы'))

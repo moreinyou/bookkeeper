@@ -1,10 +1,7 @@
 import sys
-import os
 
 from bookkeeper.view import model_to_view
 from PySide6.QtWidgets import QApplication
-if os.path.isfile('lovely.db'):
-    os.remove('lovely.db')
 
 from bookkeeper.models.category import Category
 from bookkeeper.models.expense import Expense
