@@ -61,3 +61,17 @@ def read_tree(lines: Iterable[str]) -> list[tuple[str, str | None]]:
         last_name = name
         last_indent = indent
     return result
+
+def listT2list(repo_listT: list[T]) -> list[list[str]]:
+    fields = get_annotations(type(repo_listT[0]), eval_str=True)
+    listOfObjDesc = []
+    for T_obj in repo_listT:
+        T_desc = [str(getattr(T_obj, attfield)) for attfield in fields]
+        listOfObjDesc.append(T_desc)
+    return listOfObjDesc
+
+def get_cat_name_pk(data: list[list[str]],cat_repo):
+    for idx, dat in enumerate(data):
+        obj = cat_repo.get(int(dat[1]))
+        data[idx][1] = obj.name
+    return data
