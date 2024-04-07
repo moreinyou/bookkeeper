@@ -1,9 +1,8 @@
-from dataclasses import dataclass, field
-from datetime import timedelta
+from dataclasses import dataclass
 
 @dataclass(slots=True)
 class Budget:
+    period: int
     amount: int
-    term: timedelta = field(default=timedelta(days=1))
     pk: int = 0
 
