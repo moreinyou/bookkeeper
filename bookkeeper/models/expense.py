@@ -5,7 +5,6 @@
 from dataclasses import dataclass, field
 from datetime import datetime, time
 
-# current_day = datetime.combine(datetime.now, time.min)
 def date_withouttime():
     current_day = datetime.date(datetime.combine(datetime.now(), time.min))
     return current_day
@@ -17,7 +16,6 @@ class Expense:
     amount - сумма
     category - id категории расходов
     expense_date - дата расхода
-    added_date - дата добавления в бд
     comment - комментарий
     pk - id записи в базе данных
     """
