@@ -98,7 +98,7 @@ class MainWindow(QMainWindow):
         self.table_widget2 = QTableWidget(3, 4)
         self.table_widget2.setColumnHidden(3,True)
         self.table_widget2.setHorizontalHeaderLabels("Период Бюджет Сумма".split())
-
+        # self.table_widget2.cellChanged.connect(self.bud_cell_changed)
         header2 = self.table_widget2.horizontalHeader()
         header2.setSectionResizeMode(0, QHeaderView.ResizeToContents)
         header2.setSectionResizeMode(1, QHeaderView.ResizeToContents)
@@ -146,7 +146,11 @@ class MainWindow(QMainWindow):
 
         self.add_budget = QPushButton("Установить бюджет")
         self.add_budget.clicked.connect(self.add_bud)
-        self.layout.addWidget(self.add_budget, 10, 0, 1, 3)
+        self.layout.addWidget(self.add_budget, 10, 0)
+
+        self.add_budget = QPushButton("Удалить бюджет")
+        self.add_budget.clicked.connect(self.delete_bud)
+        self.layout.addWidget(self.add_budget, 10, 1)
 
     def remove_cat(self):
         if self.combo_box.currentText() != '':
@@ -158,6 +162,7 @@ class MainWindow(QMainWindow):
                 self.exp_repo.delete(raskhod)
             self.update_cat_list()
             self.update_table()
+            self.update_bud_table()
 
     def add_bud(self):
         text_dialog = BudgetInput(self)
@@ -171,7 +176,10 @@ class MainWindow(QMainWindow):
             else:
                 raise ValueError
         except (ValueError):
-            QMessageBox.critical(self, "ValueError", "Период и/или бюджет должны быть положительными", QMessageBox.Ok)
+            QMessageBox.critical(self, "ValueError", \
+                                 "Период и/или бюджет должны быть положительными числами", QMessageBox.Ok)
+        except (UnboundLocalError):
+            pass
         self.update_bud_table()
 
     def exp_cell_changed(self, row, column):
@@ -196,7 +204,7 @@ class MainWindow(QMainWindow):
             pk = self.table_widget.item(self.table_widget.currentRow(),category_pk_column).text()
             self.exp_repo.delete(self.exp_repo.get(int(pk)))
             self.update_table()
-
+        self.update_bud_table()
 
     def add_exp(self,exp_repo):
         if self.combo_box.currentText() != '' and self.line_edit.text() != '':
@@ -225,9 +233,18 @@ class MainWindow(QMainWindow):
         result = text_dialog.exec_()
         if result == QDialog.Accepted:
             entered_text = text_dialog.get_text()
-            self.cat_repo.add(Category(name = entered_text))
-            self.update_cat_list()
+            try:
+                if entered_text == '' or self.cat_repo.get_all({'name':entered_text}) != None:
+                    raise ValueError
+                else:
+                    self.cat_repo.add(Category(name=entered_text))
+                    self.update_cat_list()
+            except (ValueError):
+                QMessageBox.critical(self, "ValueError", \
+                                     "Название категории должен быть уникальными и не пустым", QMessageBox.Ok)
 
+    # def bud_cell_changed(self):
+    #     self.update_bud_table()
     def add_all_cat(self,cat_names_list: list[str]):
         self.combo_box.addItems(cat_names_list)
 
@@ -255,6 +272,12 @@ class MainWindow(QMainWindow):
                 dat.insert(2, str(summa))
             self.set_data(self.table_widget2,data)
 
+    def delete_bud(self):
+        category_pk_column = 3
+        if self.table_widget2.currentRow() >= 0:
+            pk = self.table_widget2.item(self.table_widget2.currentRow(),category_pk_column).text()
+            self.bud_repo.delete(self.bud_repo.get(int(pk)))
+        self.update_bud_table()
 
     def set_data(self, table_widget, data: list[list[str]]):
         table_widget.setRowCount(len(data))

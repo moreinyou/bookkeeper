@@ -3,8 +3,12 @@
 """
 
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import datetime, time
 
+# current_day = datetime.combine(datetime.now, time.min)
+def date_withouttime():
+    current_day = datetime.date(datetime.combine(datetime.now(), time.min))
+    return current_day
 
 @dataclass(slots=True)
 class Expense:
@@ -19,6 +23,6 @@ class Expense:
     """
     amount: int
     category: int
-    expense_date: datetime = field(default_factory=datetime.now)
+    expense_date: datetime = field(default_factory = date_withouttime)
     comment: str = ''
     pk: int = 0

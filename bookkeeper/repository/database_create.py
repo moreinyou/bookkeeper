@@ -15,29 +15,29 @@ class DatabaseConnection():
     def close_connection(self):
         self.conn.close()
 
+def create_db(db_dir):
+    # db_dir='lovely.db'
+    basa_for_everything = DatabaseConnection(db_dir)
 
-db_name='lovely.db'
-basa_for_everything = DatabaseConnection(db_name)
+    basa_for_everything.execute_query('''
+            CREATE TABLE IF NOT EXISTS Category (
+                name TEXT,
+                parent INTEGER,
+                pk INTEGER PRIMARY KEY)''')
 
-basa_for_everything.execute_query('''
-        CREATE TABLE IF NOT EXISTS Category (
-            name TEXT,
-            parent INTEGER,
-            pk INTEGER PRIMARY KEY)''')
+    basa_for_everything.execute_query('''
+            CREATE TABLE IF NOT EXISTS Expense (
+                amount INTEGER,
+                category INTEGER,
+                expense_date DATE,
+                comment TEXT,
+                pk INTEGER PRIMARY KEY,
+                FOREIGN KEY (category) REFERENCES Category(name))''')
 
-basa_for_everything.execute_query('''
-        CREATE TABLE IF NOT EXISTS Expense (
-            amount INTEGER,
-            category INTEGER,
-            expense_date DATE,
-            comment TEXT,
-            pk INTEGER PRIMARY KEY,
-            FOREIGN KEY (category) REFERENCES Category(name))''')
+    basa_for_everything.execute_query('''
+            CREATE TABLE IF NOT EXISTS Budget (
+                period INTEGER,
+                amount INTEGER,            
+                pk INTEGER PRIMARY KEY)''')
 
-basa_for_everything.execute_query('''
-        CREATE TABLE IF NOT EXISTS Budget (
-            period DATE,
-            amount INTEGER,            
-            pk INTEGER PRIMARY KEY)''')
-
-basa_for_everything.close_connection()
+    basa_for_everything.close_connection()

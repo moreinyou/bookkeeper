@@ -12,7 +12,6 @@ class SQLiteRepository(AbstractRepository[T]):
         self.cls = cls
 
     def add(self, obj: T) -> int:
-
         field_names = list(self.fields.keys())
         field_names.remove('pk')
         names = ', '.join(field_names)
