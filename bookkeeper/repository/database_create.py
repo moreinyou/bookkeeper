@@ -36,9 +36,8 @@ basa_for_everything.execute_query('''
 
 basa_for_everything.execute_query('''
         CREATE TABLE IF NOT EXISTS Budget (
-            amount INTEGER,
-            category INTEGER,
-            pk INTEGER PRIMARY KEY,
-            term DATE)''')
+            period DATE,
+            amount INTEGER,            
+            pk INTEGER PRIMARY KEY)''')
 
 basa_for_everything.close_connection()
