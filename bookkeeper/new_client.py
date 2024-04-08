@@ -28,5 +28,4 @@ win1.update_bud_table()
 win1.update_cat_list()
 win1.show()
 
-
 sys.exit(app.exec())
