@@ -79,7 +79,7 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(self.central_widget)
         self.layout = QGridLayout(self.central_widget)
 
-        with open(r'..\style.qss', 'r') as f:
+        with open(r'style.qss', 'r') as f:
             self.setStyleSheet(f.read())
 
         self.layout.addWidget(QLabel('Последние расходы'))
@@ -276,6 +276,7 @@ class MainWindow(QMainWindow):
             self.set_data(self.table_widget,data)
 
     def update_bud_table(self):
+        self.table_widget2.clearContents()
         if self.bud_repo.get_all() != []:
             data = listT2list(self.bud_repo.get_all())
             today = date_withouttime()
@@ -284,7 +285,7 @@ class MainWindow(QMainWindow):
                 summa = sum([exp.amount for exp in self.exp_repo.get_all() if \
                  datetime.strptime(exp.expense_date,'%Y-%m-%d').date() >= period_from])
                 dat.insert(2, str(summa))
-            self.table_widget2.clearContents()
+
             self.set_data(self.table_widget2,data)
 
     def delete_bud(self):
