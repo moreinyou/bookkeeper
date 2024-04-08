@@ -79,7 +79,7 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(self.central_widget)
         self.layout = QGridLayout(self.central_widget)
 
-        with open(r'.\.\style.qss', 'r') as f:
+        with open(r'..\style.qss', 'r') as f:
             self.setStyleSheet(f.read())
 
         self.layout.addWidget(QLabel('Последние расходы'))
@@ -207,6 +207,7 @@ class MainWindow(QMainWindow):
                                          "Некорректный формат даты",
                                          QMessageBox.Ok)
             self.update_table()
+            self.update_bud_table()
 
     def remove_exp(self):
         category_pk_column = 4
@@ -226,7 +227,6 @@ class MainWindow(QMainWindow):
                     if self.combo_box.currentText() != '':
                         category_pk = int(self.combo_box.currentText().split('.')[0])
                         self.exp_repo.add(Expense(amount, category_pk,date, comment=comment))
-                        self.update_table()
                 except (ValueError):
                     QMessageBox.critical(self,
                                          "ValueError",
@@ -236,10 +236,10 @@ class MainWindow(QMainWindow):
                 if self.combo_box.currentText() != '':
                     category_pk = int(self.combo_box.currentText().split('.')[0])
                     self.exp_repo.add(Expense(amount, category_pk, comment=comment))
-                    self.update_table()
-            self.line_edit3.clear()
-            self.line_edit.clear()
-            self.update_bud_table()
+        self.line_edit3.clear()
+        self.line_edit.clear()
+        self.update_table()
+        self.update_bud_table()
 
     def add_cat(self):
         text_dialog = TextInputDialog(self)
@@ -276,15 +276,15 @@ class MainWindow(QMainWindow):
             self.set_data(self.table_widget,data)
 
     def update_bud_table(self):
-        self.table_widget2.clearContents()
         if self.bud_repo.get_all() != []:
             data = listT2list(self.bud_repo.get_all())
             today = date_withouttime()
             for idx, dat in enumerate(data):
-                period_from = today - timedelta(days=int())
+                period_from = today - timedelta(days=int(dat[0]))
                 summa = sum([exp.amount for exp in self.exp_repo.get_all() if \
                  datetime.strptime(exp.expense_date,'%Y-%m-%d').date() >= period_from])
                 dat.insert(2, str(summa))
+            self.table_widget2.clearContents()
             self.set_data(self.table_widget2,data)
 
     def delete_bud(self):
