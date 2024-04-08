@@ -5,6 +5,9 @@ from inspect import get_annotations
 from bookkeeper.repository.abstract_repository import AbstractRepository, T
 
 class SQLiteRepository(AbstractRepository[T]):
+    """
+        Репозиторий, работающий с SQLite. Хранит данные в дб.
+    """
     def __init__(self, db_file: str, cls: type) -> None:
         self.db_file = db_file
         self.table_name = cls.__name__.lower()
@@ -66,7 +69,8 @@ class SQLiteRepository(AbstractRepository[T]):
         with sqlite3.connect(self.db_file) as con:
             cur = con.cursor()
             #cur.execute('PRAGMA foreign_keys = ON')
-            cur.execute(f'UPDATE {self.table_name} SET ({names}) = ({p}) WHERE pk = {obj.pk}', values)
+            cur.execute(f'UPDATE {self.table_name} SET \
+             ({names}) = ({p}) WHERE pk = {obj.pk}', values)
         con.close()
         return None
 

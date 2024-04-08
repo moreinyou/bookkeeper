@@ -19,7 +19,7 @@ from datetime import datetime, time, timedelta
 from PySide6.QtGui import QIntValidator
 from bookkeeper.models.expense import Expense
 from bookkeeper.models.category import Category
-from bookkeeper.utils import read_tree,listT2list, get_cat_name_pk
+from bookkeeper.utils import listT2list, get_cat_name_pk
 from bookkeeper.models.budget import Budget
 
 
@@ -79,13 +79,16 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(self.central_widget)
         self.layout = QGridLayout(self.central_widget)
 
-        with open(r'D:\PycharmProjects\практика\app\bookkeeper\style.qss', 'r') as f:
+        with open(r'.\.\style.qss', 'r') as f:
             self.setStyleSheet(f.read())
 
         self.layout.addWidget(QLabel('Последние расходы'))
-        self.table_widget = QTableWidget(50, 5)
+        self.table_widget = QTableWidget()
+        self.table_widget.setColumnCount(5)
         self.table_widget.setColumnHidden(4,True)
-        self.table_widget.setHorizontalHeaderLabels("Сумма, Категория, Дата покупки, Комментарий".split(','))
+        self.table_widget.setHorizontalHeaderLabels(
+            "Сумма, Категория, Дата покупки, Комментарий".split(',')
+        )
         self.table_widget.cellChanged.connect(self.exp_cell_changed)
         header = self.table_widget.horizontalHeader()
         header.setSectionResizeMode(0, QHeaderView.ResizeToContents)
@@ -176,8 +179,12 @@ class MainWindow(QMainWindow):
             else:
                 raise ValueError
         except (ValueError):
-            QMessageBox.critical(self, "ValueError", \
-                                 "Период и/или бюджет должны быть положительными числами", QMessageBox.Ok)
+            QMessageBox.critical(
+                self,
+                "ValueError",
+                "Период и/или бюджет должны быть положительными числами",
+                QMessageBox.Ok
+            )
         except (UnboundLocalError):
             pass
         self.update_bud_table()
@@ -195,12 +202,15 @@ class MainWindow(QMainWindow):
                     obj = Expense(*obj_data)
                     self.exp_repo.update(obj)
                 except (ValueError):
-                    QMessageBox.critical(self, "ValueError", "Некорректный формат даты", QMessageBox.Ok)
+                    QMessageBox.critical(self,
+                                         "ValueError",
+                                         "Некорректный формат даты",
+                                         QMessageBox.Ok)
             self.update_table()
 
     def remove_exp(self):
         category_pk_column = 4
-        if self.table_widget.currentRow() >= 0:
+        if self.table_widget.currentRow() >= 0 and self.table_widget.rowCount() >0:
             pk = self.table_widget.item(self.table_widget.currentRow(),category_pk_column).text()
             self.exp_repo.delete(self.exp_repo.get(int(pk)))
             self.update_table()
@@ -218,7 +228,10 @@ class MainWindow(QMainWindow):
                         self.exp_repo.add(Expense(amount, category_pk,date, comment=comment))
                         self.update_table()
                 except (ValueError):
-                    QMessageBox.critical(self, "ValueError", "Некорректный формат даты", QMessageBox.Ok)
+                    QMessageBox.critical(self,
+                                         "ValueError",
+                                         "Некорректный формат даты",
+                                         QMessageBox.Ok)
             else:
                 if self.combo_box.currentText() != '':
                     category_pk = int(self.combo_box.currentText().split('.')[0])
@@ -234,14 +247,16 @@ class MainWindow(QMainWindow):
         if result == QDialog.Accepted:
             entered_text = text_dialog.get_text()
             try:
-                if entered_text == '' or self.cat_repo.get_all({'name':entered_text}) != None:
+                if entered_text == '' or self.cat_repo.get_all({'name':entered_text}) != []:
                     raise ValueError
                 else:
                     self.cat_repo.add(Category(name=entered_text))
                     self.update_cat_list()
             except (ValueError):
-                QMessageBox.critical(self, "ValueError", \
-                                     "Название категории должен быть уникальными и не пустым", QMessageBox.Ok)
+                QMessageBox.critical(self,
+                                     "ValueError",
+                                     "Название категории должно быть уникальными и не пустым",
+                                     QMessageBox.Ok)
 
     # def bud_cell_changed(self):
     #     self.update_bud_table()
